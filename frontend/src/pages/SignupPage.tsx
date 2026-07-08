@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../redux/hooks'
-import { signup } from '../redux/slices/authSlice'
+import signup from '../redux/slices/authSlice'
 import { Mail, Lock, User, Loader, Building2 } from 'lucide-react'
 
 export default function SignupPage() {
