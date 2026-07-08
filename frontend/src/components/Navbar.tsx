@@ -29,7 +29,7 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <button onClick={() => navigate(getDashboardPath())} className="flex items-center gap-2 hover:opacity-80">
-            <img src="/digiayudh-logo.svg" alt="DigiAyudh" className="h-8 w-8" />
+            <img src="/digiayudh-logo.jpeg" alt="DigiAyudh" className="h-8 w-8" />
             <span className="font-bold text-lg bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               DigiAyudh
             </span>

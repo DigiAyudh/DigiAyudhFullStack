@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../redux/hooks'
 import signup from '../redux/slices/authSlice'
-import { Mail, Lock, User, Loader, Building2 } from 'lucide-react'
+import { Mail, Lock, User, Loader, Building2, Phone } from 'lucide-react'
 
 export default function SignupPage() {
   const navigate = useNavigate()
@@ -11,6 +11,7 @@ export default function SignupPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
     password: '',
     role: 'admin',
     companyName: '',
@@ -36,7 +37,7 @@ export default function SignupPage() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <img src="/digiayudh-logo.svg" alt="DigiAyudh" className="h-12 w-12 mx-auto mb-4" />
+          <img src="/digiayudh-logo.jpeg" alt="DigiAyudh" className="h-12 w-12 mx-auto mb-4" />
           <h1 className="text-3xl font-bold text-text">Create Account</h1>
           <p className="text-text-light mt-2">Join DigiAyudh today</p>
         </div>
@@ -78,6 +79,38 @@ export default function SignupPage() {
                 onChange={handleChange}
                 placeholder="you@example.com"
                 required
+                className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+          </div>
+
+          {/* Phone Number */}
+          <div>
+            <label className="block text-sm font-medium text-text mb-2">Phone Number</label>
+            <div className="relative">
+              <Phone className="absolute left-3 top-3 text-text-light" size={20} />
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="123-456-7890"
+                className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+          </div>
+
+          {/* Company Name */}
+          <div>
+            <label className="block text-sm font-medium text-text mb-2">Company Name</label>
+            <div className="relative">
+              <Building2 className="absolute left-3 top-3 text-text-light" size={20} />
+              <input
+                type="text"
+                name="companyName"
+                value={formData.companyName}
+                onChange={handleChange}
+                placeholder="Your Company"
                 className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
