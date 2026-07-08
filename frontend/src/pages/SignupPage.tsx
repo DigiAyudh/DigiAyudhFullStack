@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../redux/hooks'
-import signup from '../redux/slices/authSlice'
+import { clientSignup } from '../redux/slices/authSlice'
 import { Mail, Lock, User, Loader, Building2, Phone } from 'lucide-react'
 
 export default function SignupPage() {
@@ -13,7 +13,6 @@ export default function SignupPage() {
     email: '',
     phone: '',
     password: '',
-    role: 'admin',
     companyName: '',
   })
 
@@ -22,15 +21,14 @@ export default function SignupPage() {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const result = await dispatch(signup(formData))
-    if (result.payload?.user) {
-      const user = result.payload.user
-      if (user.role === 'admin') navigate('/admin/dashboard')
-      else if (user.role === 'employee') navigate('/employee/dashboard')
-      else if (user.role === 'client') navigate('/client/dashboard')
-    }
+  e.preventDefault()
+
+  const result = await dispatch(clientSignup(formData))
+
+  if (clientSignup.fulfilled.match(result)) {
+    navigate('/client/dashboard')
   }
+}
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
@@ -150,7 +148,7 @@ export default function SignupPage() {
           </div>
 
           {/* Role */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-text mb-2">Role</label>
             <select
               name="role"
@@ -162,7 +160,7 @@ export default function SignupPage() {
               <option value="employee">Employee</option>
               <option value="client">Client</option>
             </select>
-          </div>
+          </div> */}
 
           {/* Submit Button */}
           <button
