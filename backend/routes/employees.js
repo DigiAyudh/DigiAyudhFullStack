@@ -1,21 +1,21 @@
 import express from 'express'
 import Employee from '../models/Employee.js'
+import { requireRole } from '../middleware/auth.js'
 
 const router = express.Router()
 
-// Get all employees
-router.get('/', async (req, res) => {
+router.get('/', requireRole('admin', 'employee'), async (req, res) => {
   try {
     const { company } = req.query
-    const employees = await Employee.find({ company }).populate('userId', 'name email')
+    const query = company ? { company } : {}
+    const employees = await Employee.find(query).populate('userId', 'name email isActive')
     res.json({ success: true, data: employees })
   } catch (error) {
     res.status(500).json({ success: false, message: error.message })
   }
 })
 
-// Create employee
-router.post('/', async (req, res) => {
+router.post('/', requireRole('admin'), async (req, res) => {
   try {
     const employee = new Employee(req.body)
     await employee.save()
@@ -26,10 +26,9 @@ router.post('/', async (req, res) => {
   }
 })
 
-// Get employee by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', requireRole('admin', 'employee'), async (req, res) => {
   try {
-    const employee = await Employee.findById(req.params.id).populate('userId', 'name email')
+    const employee = await Employee.findById(req.params.id).populate('userId', 'name email isActive')
     if (!employee) return res.status(404).json({ success: false, message: 'Employee not found' })
     res.json({ success: true, data: employee })
   } catch (error) {
@@ -37,11 +36,12 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-// Update employee
-router.put('/:id', async (req, res) => {
+router.put('/:id', requireRole('admin'), async (req, res) => {
   try {
-    const employee = await Employee.findByIdAndUpdate(req.params.id, req.body, { new: true })
-      .populate('userId', 'name email')
+    const employee = await Employee.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate(
+      'userId',
+      'name email isActive'
+    )
     if (!employee) return res.status(404).json({ success: false, message: 'Employee not found' })
     res.json({ success: true, data: employee })
   } catch (error) {
@@ -49,8 +49,7 @@ router.put('/:id', async (req, res) => {
   }
 })
 
-// Delete employee
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireRole('admin'), async (req, res) => {
   try {
     const employee = await Employee.findByIdAndDelete(req.params.id)
     if (!employee) return res.status(404).json({ success: false, message: 'Employee not found' })

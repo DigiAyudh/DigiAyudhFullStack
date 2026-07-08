@@ -13,25 +13,65 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       lowercase: true,
-      match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please provide a valid email'],
+      trim: true,
+      match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email'],
     },
     password: {
       type: String,
       required: true,
-      minlength: 6,
+      minlength: 8,
       select: false,
     },
-    phone: String,
+    phone: {
+      type: String,
+      trim: true,
+    },
+    countryCode: {
+      type: String,
+      trim: true,
+    },
     role: {
       type: String,
       enum: ['admin', 'employee', 'client'],
-      default: 'employee',
+      required: true,
+    },
+    companyName: {
+      type: String,
+      trim: true,
+    },
+    companyType: {
+      type: String,
+      trim: true,
+    },
+    city: {
+      type: String,
+      trim: true,
+    },
+    state: {
+      type: String,
+      trim: true,
+    },
+    country: {
+      type: String,
+      trim: true,
+    },
+    termsAccepted: {
+      type: Boolean,
+      default: false,
+    },
+    phoneVerified: {
+      type: Boolean,
+      default: false,
     },
     profileImage: String,
     department: String,
     company: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Company',
+    },
+    assignedEmployee: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
     },
     isActive: {
       type: Boolean,
@@ -41,15 +81,20 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
   },
   { timestamps: true }
 )
 
-// Hash password before saving
+userSchema.index({ phone: 1, countryCode: 1 }, { unique: true, sparse: true })
+
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next()
   try {
-    const salt = await bcrypt.genSalt(10)
+    const salt = await bcrypt.genSalt(12)
     this.password = await bcrypt.hash(this.password, salt)
     next()
   } catch (error) {
@@ -57,9 +102,8 @@ userSchema.pre('save', async function (next) {
   }
 })
 
-// Compare password method
 userSchema.methods.comparePassword = async function (passwordToCompare) {
-  return await bcrypt.compare(passwordToCompare, this.password)
+  return bcrypt.compare(passwordToCompare, this.password)
 }
 
 export default mongoose.model('User', userSchema)
